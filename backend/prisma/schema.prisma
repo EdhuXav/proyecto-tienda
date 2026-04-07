@@ -1,0 +1,283 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// PERSONA
+model Persona {
+  id_persona       Int      @id @default(autoincrement())
+  nombres          String
+  apellidos        String?
+  tipo_documento   String?
+  numero_documento String?  @unique
+  telefono         String?
+  email            String?
+  direccion        String?
+  activo           Boolean  @default(true)
+  fecha_creacion   DateTime @default(now())
+
+  trabajadores Trabajador[]
+  clientes     Cliente[]
+  proveedores  Proveedor[]
+}
+
+// TRABAJADOR
+model Trabajador {
+  id_trabajador      Int       @id @default(autoincrement())
+  id_persona         Int
+  codigo_trabajador  String?   @unique
+  cargo              String?
+  fecha_contratacion DateTime?
+  estado             String    @default("ACTIVO")
+
+  persona Persona @relation(fields: [id_persona], references: [id_persona])
+
+  usuario    Usuario?
+  sucursales TrabajadorSucursal[]
+}
+
+// SUCURSAL
+model Sucursal {
+  id_sucursal Int     @id @default(autoincrement())
+  nombre      String
+  direccion   String?
+  telefono    String?
+  activo      Boolean @default(true)
+
+  trabajadores TrabajadorSucursal[]
+  inventarios  Inventario[]
+  ventas       Venta[]
+  cajas        Caja[]
+
+  movimientos MovimientoInventario[]
+}
+
+// RELACION TRABAJADOR - SUCURSAL
+model TrabajadorSucursal {
+  id_trabajador Int
+  id_sucursal   Int
+
+  trabajador Trabajador @relation(fields: [id_trabajador], references: [id_trabajador])
+  sucursal   Sucursal   @relation(fields: [id_sucursal], references: [id_sucursal])
+
+  @@id([id_trabajador, id_sucursal])
+}
+
+// USUARIO
+model Usuario {
+  id_usuario    Int     @id @default(autoincrement()) 
+  id_trabajador Int     @unique
+  username      String  @unique
+  password_hash String
+  activo        Boolean @default(true)
+
+  trabajador Trabajador @relation(fields: [id_trabajador], references: [id_trabajador])
+
+  roles     UsuarioRol[]
+  ventas    Venta[]
+  aperturas AperturaCaja[]
+
+  movimientos MovimientoInventario[]
+  auditorias  Auditoria[]
+}
+
+// ROLES Y PERMISOS
+model Rol {
+  id_rol Int    @id @default(autoincrement())
+  nombre String @unique
+
+  usuarios UsuarioRol[]
+  permisos RolPermiso[]
+}
+
+model Permiso {
+  id_permiso Int    @id @default(autoincrement())
+  nombre     String
+  modulo     String
+
+  roles RolPermiso[]
+}
+
+model UsuarioRol {
+  id_usuario Int
+  id_rol     Int
+
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
+  rol     Rol     @relation(fields: [id_rol], references: [id_rol])
+
+  @@id([id_usuario, id_rol])
+}
+
+model RolPermiso {
+  id_rol     Int
+  id_permiso Int
+
+  rol     Rol     @relation(fields: [id_rol], references: [id_rol])
+  permiso Permiso @relation(fields: [id_permiso], references: [id_permiso])
+
+  @@id([id_rol, id_permiso])
+}
+
+// CLIENTE Y PROVEEDOR
+model Cliente {
+  id_cliente Int @id @default(autoincrement())
+  id_persona Int
+
+  persona Persona @relation(fields: [id_persona], references: [id_persona])
+  ventas  Venta[]
+}
+
+model Proveedor {
+  id_proveedor Int     @id @default(autoincrement())
+  id_persona   Int
+  empresa      String?
+
+  persona Persona @relation(fields: [id_persona], references: [id_persona])
+}
+
+// PRODUCTO
+model Categoria {
+  id_categoria Int    @id @default(autoincrement())
+  nombre       String @unique
+
+  productos Producto[]
+}
+
+model Producto {
+  id_producto   Int     @id @default(autoincrement())
+  nombre        String
+  precio_venta  Decimal @db.Decimal(10, 2)
+  precio_compra Decimal @db.Decimal(10, 2)
+  id_categoria  Int
+
+  categoria Categoria @relation(fields: [id_categoria], references: [id_categoria])
+
+  inventarios   Inventario[]
+  detallesVenta VentaDetalle[]
+
+  movimientos MovimientoInventario[]
+}
+
+// INVENTARIO
+model Inventario {
+  id_inventario Int @id @default(autoincrement())
+  id_producto   Int
+  id_sucursal   Int
+  stock         Int @default(0)
+
+  producto Producto @relation(fields: [id_producto], references: [id_producto])
+  sucursal Sucursal @relation(fields: [id_sucursal], references: [id_sucursal])
+
+  @@unique([id_producto, id_sucursal])
+}
+
+// MOVIMIENTO INVENTARIO
+model MovimientoInventario {
+  id_movimiento Int      @id @default(autoincrement())
+  id_producto   Int
+  id_sucursal   Int
+  tipo          String
+  cantidad      Int
+  fecha         DateTime @default(now())
+  id_usuario    Int?
+
+  producto Producto @relation(fields: [id_producto], references: [id_producto])
+  sucursal Sucursal @relation(fields: [id_sucursal], references: [id_sucursal])
+  usuario  Usuario? @relation(fields: [id_usuario], references: [id_usuario])
+}
+
+// CAJA
+model Caja {
+  id_caja     Int    @id @default(autoincrement())
+  id_sucursal Int
+  nombre      String
+
+  sucursal Sucursal @relation(fields: [id_sucursal], references: [id_sucursal])
+
+  aperturas AperturaCaja[]
+}
+
+model AperturaCaja {
+  id_apertura    Int       @id @default(autoincrement())
+  id_caja        Int
+  id_usuario     Int
+  monto_inicial  Decimal   @db.Decimal(10, 2)
+  fecha_apertura DateTime  @default(now())
+  fecha_cierre   DateTime?
+  estado         String
+
+  caja    Caja    @relation(fields: [id_caja], references: [id_caja])
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
+
+  ventas Venta[]
+}
+
+// METODO PAGO
+model MetodoPago {
+  id_metodo_pago Int    @id @default(autoincrement())
+  nombre         String
+
+  pagos VentaPago[]
+}
+
+// VENTA
+model Venta {
+  id_venta    Int      @id @default(autoincrement())
+  id_cliente  Int?
+  id_usuario  Int
+  id_sucursal Int
+  id_apertura Int
+  fecha       DateTime @default(now())
+  total       Decimal  @db.Decimal(10, 2)
+
+  cliente  Cliente?     @relation(fields: [id_cliente], references: [id_cliente])
+  usuario  Usuario      @relation(fields: [id_usuario], references: [id_usuario])
+  sucursal Sucursal     @relation(fields: [id_sucursal], references: [id_sucursal])
+  apertura AperturaCaja @relation(fields: [id_apertura], references: [id_apertura])
+
+  detalles VentaDetalle[]
+  pagos    VentaPago[]
+}
+
+// DETALLE VENTA
+model VentaDetalle {
+  id_detalle  Int     @id @default(autoincrement())
+  id_venta    Int
+  id_producto Int
+  cantidad    Int
+  precio      Decimal @db.Decimal(10, 2)
+
+  venta    Venta    @relation(fields: [id_venta], references: [id_venta])
+  producto Producto @relation(fields: [id_producto], references: [id_producto])
+}
+
+// PAGO
+model VentaPago {
+  id_pago        Int     @id @default(autoincrement())
+  id_venta       Int
+  id_metodo_pago Int
+  monto          Decimal @db.Decimal(10, 2)
+
+  venta      Venta      @relation(fields: [id_venta], references: [id_venta])
+  metodoPago MetodoPago @relation(fields: [id_metodo_pago], references: [id_metodo_pago])
+}
+
+// AUDITORIA
+model Auditoria {
+  id_auditoria  Int      @id @default(autoincrement())
+  tabla         String
+  accion        String
+  id_registro   Int?
+  datos_antes   Json?
+  datos_despues Json?
+  fecha         DateTime @default(now())
+  id_usuario    Int?
+
+  usuario Usuario? @relation(fields: [id_usuario], references: [id_usuario])
+}
