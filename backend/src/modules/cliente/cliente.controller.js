@@ -1,35 +1,34 @@
-const TrabajadorService = require('./trabajador.service');
+const Clienteservice = require('./cliente.services');
 
-exports.getTrabajador = async (req, res) => {
+exports.getCliente = async (req, res) => {
     try{
-        const data = await TrabajadorService.getAllTrabajador();
+        const data = await Clienteservice.getAllCliente();
         res.json(data)
     } catch(error){
         res.status(500).json({error: error.message});
     }                                                  
 }
-
-exports.getTrabajadorId = async (req, res) => {
+exports.getClienteId = async (req, res) => {
     try {
-        const data = await TrabajadorService.getTrabajadorId(req.params.id,);
+        const data = await Clienteservice.getClienteId(req.params.id,);
         res.json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
-exports.creaTrabajador = async (req, res) => {
+exports.creaCliente= async (req, res) => {
   try {
-    const data = await TrabajadorService.createTrabajador(req.body);
+    const data = await Clienteservice.createCliente(req.body);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-exports.updateTrabajador = async (req, res) => {
+exports.updateCliente = async (req, res) => {
     try {
-        const actualizada = await TrabajadorService.updateTrabajador(
+        const actualizada = await Clienteservice.updateCliente(
             req.params.id,
             req.body
         );
@@ -39,9 +38,9 @@ exports.updateTrabajador = async (req, res) => {
     }
 };
 
-exports.deleteTrabajador = async (req, res) => {
+exports.deleteCliente = async (req, res) => {
     try {
-        await TrabajadorService.deleteTrabajador(req.params.id);
+        await Clienteservice.deleteCliente(req.params.id);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
