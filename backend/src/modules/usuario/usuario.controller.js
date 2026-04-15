@@ -1,35 +1,35 @@
-const TrabajadorService = require('./trabajador.service');
+const UsuarioService = require('./usuario.service');
 
-exports.getTrabajador = async (req, res) => {
+exports.getUsuario = async (req, res) => {
     try{
-        const data = await TrabajadorService.getAllTrabajador();
+        const data = await UsuarioService.getAllUsuario();
         res.json(data)
     } catch(error){
         res.status(500).json({error: error.message});
     }                                                  
 }
-
-exports.getTrabajadorId = async (req, res) => {
+ 
+exports.getUsuarioId = async (req, res) => {
     try {
-        const data = await TrabajadorService.getTrabajadorId(req.params.id,);
+        const data = await UsuarioService.getUsuarioId(req.params.id,);
         res.json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
-exports.creaTrabajador = async (req, res) => {
+exports.creaUsuario = async (req, res) => {
   try {
-    const data = await TrabajadorService.createTrabajador(req.body);
+    const data = await UsuarioService.createUsuario(req.body);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-exports.updateTrabajador = async (req, res) => {
+exports.updateUsuario = async (req, res) => {
     try {
-        const actualizada = await TrabajadorService.updateTrabajador(
+        const actualizada = await UsuarioService.updateUsuario(
             req.params.id,
             req.body
         );
@@ -39,9 +39,10 @@ exports.updateTrabajador = async (req, res) => {
     }
 };
 
-exports.deleteTrabajador = async (req, res) => {
+exports.deleteUsuario = async (req, res) => {
     try {
-        await TrabajadorService.deleteTrabajador(req.params.id);
+        await UsuarioService.deleteUsuario(req.params.id);
+        res.json({ message: "Usuario eliminado correctamente" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
