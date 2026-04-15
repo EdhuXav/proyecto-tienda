@@ -3,7 +3,6 @@ const express = require('express');
 const personaRoutes = require('./modules/persona/persona.routes');
 const proveedorRoutes = require('./modules/proveedor/proveedor.routes');
 const productoRoutes = require('./modules/producto/producto.routes');
-const { producto } = require('./prisma/client');
 
 const app = express();
 
