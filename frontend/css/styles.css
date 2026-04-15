@@ -1,0 +1,164 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-page: #f0f2f7;
+  --bg-card: #ffffff;
+  --bg-input: #f7f8fa;
+  --border: rgba(0,0,0,0.09);
+  --border-input: rgba(0,0,0,0.12);
+  --text-primary: #111318;
+  --text-secondary: #6b7280;
+  --text-label: #374151;
+  --placeholder: #9ca3af;
+  --brand: #1D9E75;
+  --brand-hover: #0F6E56;
+  --forgot: #1D9E75;
+  --toggle-bg: #e5e7eb;
+  --toggle-border: rgba(0,0,0,0.1);
+  --error-bg: rgba(226,75,74,0.08);
+  --error-border: rgba(226,75,74,0.25);
+  --error-text: #A32D2D;
+  --shadow: 0 2px 24px rgba(0,0,0,0.07);
+}
+
+[data-theme="dark"] {
+  --bg-page: #0f1117;
+  --bg-card: #1a1d27;
+  --bg-input: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.08);
+  --border-input: rgba(255,255,255,0.12);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255,255,255,0.45);
+  --text-label: rgba(255,255,255,0.6);
+  --placeholder: rgba(255,255,255,0.25);
+  --brand-hover: #5DCAA5;
+  --forgot: #5DCAA5;
+  --toggle-bg: #2d3148;
+  --toggle-border: rgba(255,255,255,0.1);
+  --error-bg: rgba(226,75,74,0.12);
+  --error-border: rgba(226,75,74,0.3);
+  --error-text: #F09595;
+  --shadow: 0 2px 24px rgba(0,0,0,0.4);
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg-page);
+  transition: background 0.3s;
+}
+
+.topbar {
+  position: fixed;
+  top: 0; right: 0;
+  padding: 16px 20px;
+}
+
+.toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--toggle-bg);
+  border: 0.5px solid var(--toggle-border);
+  border-radius: 20px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+  user-select: none;
+}
+
+.toggle-icon { font-size: 14px; }
+.toggle-text { font-size: 12px; color: var(--text-secondary); }
+
+.track {
+  width: 28px; height: 16px;
+  background: var(--brand);
+  border-radius: 8px;
+  position: relative;
+}
+
+.thumb {
+  width: 12px; height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px; left: 2px;
+  transition: transform 0.25s;
+}
+
+[data-theme="dark"] .thumb { transform: translateX(12px); }
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login-card {
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: var(--shadow);
+  transition: background 0.3s, border 0.3s;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; margin-bottom: 2rem; }
+.brand-icon {
+  width: 36px; height: 36px;
+  background: #5DCAA5;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.brand-name { font-size: 16px; font-weight: 500; color: var(--text-primary); }
+.login-title { font-size: 22px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; }
+.login-subtitle { font-size: 13px; color: var(--text-secondary); margin-bottom: 2rem; }
+
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-size: 13px; color: var(--text-label); margin-bottom: 6px; }
+.field input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 0.5px solid var(--border-input);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s, background 0.3s;
+}
+.field input:focus { border-color: var(--brand); }
+.field input::placeholder { color: var(--placeholder); }
+
+.forgot { text-align: right; margin-bottom: 1.5rem; }
+.forgot a { font-size: 12px; color: var(--forgot); text-decoration: none; }
+
+.btn-login {
+  width: 100%;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn-login:hover { background: var(--brand-hover); }
+.btn-login:active { transform: scale(0.98); }
+
+.error-msg {
+  background: var(--error-bg);
+  border: 0.5px solid var(--error-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--error-text);
+  margin-bottom: 1rem;
+  display: none;
+}
+.error-msg.show { display: block; }

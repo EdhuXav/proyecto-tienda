@@ -1,4 +1,3 @@
-
 const proveedorService = require('./proveedor.service');
 
 exports.getProveedor = async (req,res) => {
